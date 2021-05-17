@@ -30,6 +30,13 @@ Contact it:
 curl localhost:8080/hey
 ```
 
+Alternatively, if you want a long string to be printed, you may call
+
+```bash
+# Set paragraphs to whatever number you desire. Default is 1
+call localhost:8080/lorem-ipsum?paragraphs=3
+```
+
 ## Docker/Kubernetes
 
 Build and push the docker container:
