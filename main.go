@@ -25,9 +25,11 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
+	loreimpsum "gopkg.in/loremipsum.v1"
 )
 
 // GetOutboundIP Gets the preferred outbound ip of this machine
@@ -59,10 +61,26 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, msg)
 }
 
+func lorem(w http.ResponseWriter, r *http.Request) {
+	paragraphs := 1
+	queryPar := r.URL.Query().Get("paragraphs")
+	if queryPar != "" {
+		_pars, err := strconv.ParseInt(queryPar, 10, 32)
+		if err == nil {
+			paragraphs = int(_pars)
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
+	li := loreimpsum.New()
+	fmt.Fprintf(w, "%s", li.Paragraphs(paragraphs))
+}
+
 func main() {
 	ip := GetOutboundIP()
 	r := mux.NewRouter()
 	r.HandleFunc("/hey", handle)
+	r.HandleFunc("/lorem-ipsum", lorem)
 
 	srv := &http.Server{
 		Addr:         "0.0.0.0:8080",
